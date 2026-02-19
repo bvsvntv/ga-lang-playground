@@ -1,28 +1,40 @@
 import React, { useState } from 'react';
 
-function App() {
-  const [downKey, setDownKey] = useState<number>(0);
-  const [downKeyCode, setDownKeyCode] = useState<string>("Key{X}");
+type LastKeyDetail = {
+  key: string;
+  keyCode: number;
+  altKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+};
 
-  const [altKey, setAltKey] = useState<boolean>(false);
-  const [ctrlKey, setCtrlKey] = useState<boolean>(false);
-  const [shiftKey, setShiftKey] = useState<boolean>(false);
+function App() {
+  const [lastKeyDetail, setLastKeyDetail] = useState<LastKeyDetail>({
+    key: '',
+    keyCode: 0,
+    altKey: false,
+    ctrlKey: false,
+    shiftKey: false,
+  });
 
   function handleOnKeyUp(e: React.KeyboardEvent) {
-      if(e.altKey) setAltKey(true);
-      else if(e.shiftKey) setShiftKey(true);
-      else if(e.ctrlKey) setCtrlKey(true);
-      else {
-          setDownKey(+e.keyCode)
-          setDownKeyCode(e.code)
-      };
+    setLastKeyDetail({
+      key: e.key,
+      keyCode: e.keyCode,
+      altKey: e.altKey,
+      ctrlKey: e.ctrlKey,
+      shiftKey: e.shiftKey,
+    });
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
       <main className="min-h-screen w-full max-w-3xl px-4 py-16">
         <h3 className="text-md font-semibold text-zinc-700">
-          PRESSED: {downKey}/{downKeyCode} | ALT_KEY: {altKey ? "YES" : "NO"} | CTRL_KEY: {ctrlKey ? "YES" : "NO"} | SHIFT_KEY: {shiftKey ? "YES" : "NO"}
+          PRESSED: {lastKeyDetail.keyCode}/{lastKeyDetail.key} | ALT_KEY:{' '}
+          {lastKeyDetail.altKey ? 'YES' : 'NO'} | CTRL_KEY:{' '}
+          {lastKeyDetail.ctrlKey ? 'YES' : 'NO'} | SHIFT_KEY:{' '}
+          {lastKeyDetail.shiftKey ? 'YES' : 'NO'}
         </h3>
 
         <textarea
