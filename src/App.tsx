@@ -17,7 +17,7 @@ function App() {
     shiftKey: false,
   });
 
-  function handleOnKeyUp(e: React.KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent) {
     setLastKeyDetail({
       key: e.key,
       keyCode: e.keyCode,
@@ -38,7 +38,7 @@ function App() {
         </h3>
 
         <textarea
-          onKeyDown={(e) => handleOnKeyUp(e)}
+          onKeyDown={handleKeyDown}
           rows={8}
           className="focus:border-1 text-zinc mt-2 w-full rounded border border-zinc-400 p-2 focus:border-zinc-500 focus:outline-none"
         />
