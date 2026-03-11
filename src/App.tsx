@@ -5,7 +5,7 @@ function App() {
   const [input, setInput] = useState<string>('');
   const [output, setOutput] = useState<string>('');
 
-  function handleRun() {
+  function getOutput(): string {
     const lexer = new Lexer(input);
     const tokens = lexer.readTokens();
 
@@ -13,9 +13,21 @@ function App() {
     const stmts = parser.parse();
 
     const interpreter = new Interpreter();
-    const result = interpreter.interpretForBrowser(stmts);
+    return interpreter.interpretForBrowser(stmts);
+  }
 
-    setOutput(result);
+  function handleRun() {
+    if (!input.trim()) {
+      setOutput('No code to run.');
+      return;
+    }
+
+    try {
+      const result = getOutput();
+      setOutput(result);
+    } catch (error: any) {
+      setOutput(error.message);
+    }
   }
 
   function handleReset() {
