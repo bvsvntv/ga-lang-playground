@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { Interpreter, Lexer, Parser } from 'ga-lang';
 
 function App() {
-  const [input, setInput] = useState<string>('');
+  const example = ` मानौ सुचना = "देवनागरी लिपिमा प्रोग्रामहरू लेखौं।"
+छाप(सुचना)
+`;
+
+  const [input, setInput] = useState<string>(example);
   const [output, setOutput] = useState<string>('');
 
   function getOutput(): string {
