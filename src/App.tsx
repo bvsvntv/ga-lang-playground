@@ -1,11 +1,21 @@
 import { useState } from 'react';
+import { Interpreter, Lexer, Parser } from 'ga-lang';
 
 function App() {
   const [input, setInput] = useState<string>('');
   const [output, setOutput] = useState<string>('');
 
   function handleRun() {
-    setOutput(input);
+    const lexer = new Lexer(input);
+    const tokens = lexer.readTokens();
+
+    const parser = new Parser(tokens);
+    const stmts = parser.parse();
+
+    const interpreter = new Interpreter();
+    const result = interpreter.interpretForBrowser(stmts);
+
+    setOutput(result);
   }
 
   function handleReset() {
