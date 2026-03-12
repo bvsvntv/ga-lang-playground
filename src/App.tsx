@@ -30,7 +30,7 @@ function App() {
     return interpreter.interpretForBrowser(stmts);
   }
 
-  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const value = e.target.value;
 
     if (value.endsWith(' ')) {
