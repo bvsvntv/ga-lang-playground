@@ -2,20 +2,17 @@ import { useState } from 'react';
 import { Interpreter, Lexer, Parser } from 'ga-lang';
 import { message } from './examples/message';
 
-async function googleInputTools() {
-  const url = encodeURI(
-    'https://inputtools.google.com/request?text=namaste&itc=ne-t-i0-und&num=3',
-  );
+async function googleInputTools(text: string): Promise<string> {
+  const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ne-t-i0-und&num=3`;
 
   const response = await fetch(url);
   if (!response.ok) {
-    console.log('Google input error.', response.status);
+    console.log('Google input error. ERROR: ', response.status);
   }
 
   const parsed = await response.json();
   const suggestions: string[] = parsed[1][0][1];
-
-  console.log('suggestions>>> ', suggestions);
+  return suggestions[0] ?? text;
 }
 
 function App() {
@@ -33,9 +30,24 @@ function App() {
     return interpreter.interpretForBrowser(stmts);
   }
 
-  function handleRun() {
-    googleInputTools();
+  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
 
+    if (value.endsWith(' ')) {
+      try {
+        const result = await googleInputTools(value);
+        setInput(result);
+      } catch (err) {
+        console.error('ERROR: ', err);
+        setInput(value);
+      }
+
+      return;
+    }
+    setInput(value);
+  }
+
+  function handleRun() {
     if (!input.trim()) {
       setOutput('No code to run.');
       return;
@@ -66,7 +78,7 @@ function App() {
           <textarea
             rows={28}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => handleChange(e)}
             className="focus:border-1 text-zinc w-full rounded border border-zinc-400 p-2 focus:border-zinc-500 focus:outline-none"
           />
           <textarea
