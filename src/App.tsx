@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { Interpreter, Lexer, Parser } from 'ga-lang';
+import { message } from './examples/message';
 
 function App() {
-  const example = `मानौ सुचना = "देवनागरी लिपिमा प्रोग्रामहरू लेखौं।"
-छाप(सुचना)
-`;
-
-  const [input, setInput] = useState<string>(example);
+  const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
 
   function getOutput(): string {
