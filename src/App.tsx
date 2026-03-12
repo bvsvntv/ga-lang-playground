@@ -2,6 +2,22 @@ import { useState } from 'react';
 import { Interpreter, Lexer, Parser } from 'ga-lang';
 import { message } from './examples/message';
 
+async function googleInputTools() {
+  const url = encodeURI(
+    'https://inputtools.google.com/request?text=namaste&itc=ne-t-i0-und&num=3',
+  );
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.log('Google input error.', response.status);
+  }
+
+  const parsed = await response.json();
+  const suggestions: string[] = parsed[1][0][1];
+
+  console.log('suggestions>>> ', suggestions);
+}
+
 function App() {
   const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
@@ -18,6 +34,8 @@ function App() {
   }
 
   function handleRun() {
+    googleInputTools();
+
     if (!input.trim()) {
       setOutput('No code to run.');
       return;
@@ -46,13 +64,13 @@ function App() {
       <main className="min-h-screen w-full max-w-7xl px-4 py-16">
         <section className="flex justify-between gap-4">
           <textarea
-            rows={16}
+            rows={28}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="focus:border-1 text-zinc w-full rounded border border-zinc-400 p-2 focus:border-zinc-500 focus:outline-none"
           />
           <textarea
-            rows={16}
+            rows={28}
             disabled
             value={output}
             className="text-zinc w-full resize-none rounded border border-none border-zinc-400 bg-zinc-200 p-2 focus:border-zinc-500 focus:outline-none"
