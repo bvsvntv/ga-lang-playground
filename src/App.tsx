@@ -1,33 +1,14 @@
 import { useState } from 'react';
-import { Interpreter, Lexer, Parser } from 'ga-lang';
 import { message } from './examples/message';
-
-async function googleInputTools(text: string): Promise<string> {
-  const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=ne-t-i0-und&num=3`;
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    console.log('Google input error. ERROR: ', response.status);
-  }
-
-  const parsed = await response.json();
-  const suggestions: string[] = parsed[1][0][1];
-  return suggestions[0] ?? text;
-}
+import { interpret } from './engine/interpreter';
+import { transliterate } from './engine/transliterator';
 
 function App() {
   const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
 
   function getOutput(): string {
-    const lexer = new Lexer(input);
-    const tokens = lexer.readTokens();
-
-    const parser = new Parser(tokens);
-    const stmts = parser.parse();
-
-    const interpreter = new Interpreter();
-    return interpreter.interpretForBrowser(stmts);
+    return interpret(input);
   }
 
   async function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -35,8 +16,8 @@ function App() {
 
     if (value.endsWith(' ')) {
       try {
-        const result = await googleInputTools(value);
-        setInput(result);
+        const result = await transliterate(value);
+        setInput(result[0]);
       } catch (err) {
         console.error('ERROR: ', err);
         setInput(value);
