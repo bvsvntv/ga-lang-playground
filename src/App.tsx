@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { message } from './examples/message';
 import { interpret } from './engine/interpreter';
 import { transliterate } from './engine/transliterator';
+import { getAlphanumericChars } from './engine/utils';
 
 function App() {
   const [input, setInput] = useState<string>(message);
@@ -15,9 +16,21 @@ function App() {
     const value = e.target.value;
 
     if (value.endsWith(' ')) {
+      const parsed = getAlphanumericChars(value);
+      if (!parsed) {
+        setInput(value);
+        return;
+      }
+
+      const { prefix, word, suffix } = parsed;
       try {
-        const result = await transliterate(value);
-        setInput(result[0]);
+        const results = await transliterate(word as string);
+        if (results.length > 0) {
+          const rebuilt = prefix + results[0] + suffix;
+          setInput(rebuilt);
+        } else {
+          setInput(results[0]);
+        }
       } catch (err) {
         console.error('ERROR: ', err);
         setInput(value);
@@ -25,6 +38,7 @@ function App() {
 
       return;
     }
+
     setInput(value);
   }
 
@@ -35,8 +49,8 @@ function App() {
     }
 
     try {
-      const result = getOutput();
-      setOutput(result);
+      const results = getOutput();
+      setOutput(results);
     } catch (error: any) {
       setOutput(error.message);
     }
