@@ -76,8 +76,8 @@ function App() {
             onChange={(e) => handleChange(e)}
             className="focus:border-1 text-zinc w-full rounded border border-zinc-400 p-2 focus:border-zinc-500 focus:outline-none"
           />
-          <pre className="text-zinc w-full resize-none rounded border border-none border-zinc-400 bg-zinc-200 p-2">
-            {output}
+          <pre className="text-zinc-500 w-full resize-none rounded border border-none border-zinc-400 bg-zinc-200 p-2">
+          {"> "}{output}
           </pre>
         </section>
 
