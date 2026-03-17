@@ -17,7 +17,7 @@ function App() {
 
     if (value.endsWith(' ')) {
       const parsed = getAlphanumericChars(value);
-      if (!parsed) {
+      if (!parsed.word) {
         setInput(value);
         return;
       }
