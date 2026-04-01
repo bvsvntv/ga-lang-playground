@@ -3,6 +3,8 @@ import { message } from './examples/message';
 import { interpret } from './engine/interpreter';
 import { transliterate } from './engine/transliterator';
 import { getAlphanumericChars } from './engine/utils';
+import { Editor } from './components/editor';
+import { Console } from './components/console';
 
 function App() {
   const [input, setInput] = useState<string>(message);
@@ -12,9 +14,7 @@ function App() {
     return interpret(input);
   }
 
-  async function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const value = e.target.value;
-
+  async function handleChange(value: string) {
     if (value.endsWith(' ')) {
       const parsed = getAlphanumericChars(value);
       if (!parsed.word) {
@@ -70,15 +70,8 @@ function App() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
       <main className="min-h-screen w-full max-w-7xl px-4 py-16">
         <section className="flex justify-between gap-4">
-          <textarea
-            rows={28}
-            value={input}
-            onChange={(e) => handleChange(e)}
-            className="focus:border-1 text-zinc w-full rounded border border-zinc-400 p-2 focus:border-zinc-500 focus:outline-none"
-          />
-          <pre className="text-zinc-500 w-full resize-none rounded border border-none border-zinc-400 bg-zinc-200 p-2">
-          <span className="font-bold text-lg text-green-500">{"\u0917"}{"\u00B7"}λ{">"} </span>{output}
-          </pre>
+          <Editor content={input} onChange={handleChange} />
+          <Console output={output} />
         </section>
 
         <section className="mt-4 flex gap-2">
