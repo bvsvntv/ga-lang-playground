@@ -5,6 +5,7 @@ import { transliterate } from './engine/transliterator';
 import { getAlphanumericChars } from './engine/utils';
 import { Editor } from './components/editor';
 import { Console } from './components/console';
+import { BrushCleaningIcon, ListRestartIcon, PlayIcon } from 'lucide-react';
 
 function App() {
   const [input, setInput] = useState<string>(message);
@@ -69,32 +70,15 @@ function App() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
       <main className="min-h-screen w-full max-w-7xl px-4 py-16">
-        <section className="flex justify-between gap-4">
-          <Editor content={input} onChange={handleChange} />
-          <Console output={output} />
+        <section className="flex gap-6">
+          <PlayIcon onClick={handleRun} className="cursor-pointer" />
+          <ListRestartIcon onClick={handleReset} className="cursor-pointer" />
+          <BrushCleaningIcon onClick={handleClear} className="cursor-pointer" />
         </section>
 
-        <section className="mt-4 flex gap-2">
-          <button
-            className="rounded bg-green-500 px-4 py-2 text-xl font-semibold text-white"
-            onClick={handleRun}
-          >
-            Run
-          </button>
-
-          <button
-            className="rounded border border-zinc-400 bg-zinc-50 px-4 py-2 text-xl font-semibold text-zinc-700"
-            onClick={handleReset}
-          >
-            Reset
-          </button>
-
-          <button
-            className="rounded border border-zinc-400 bg-red-100 px-4 py-2 text-xl font-semibold text-zinc-700"
-            onClick={handleClear}
-          >
-            Clear
-          </button>
+        <section className="mt-4 flex justify-between gap-4">
+          <Editor content={input} onChange={handleChange} />
+          <Console output={output} />
         </section>
       </main>
     </div>
