@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { message } from './examples/message';
-import { interpret } from './engine/interpreter';
-import { transliterate } from './engine/transliterator';
-import { getAlphanumericChars } from './engine/utils';
-import { Editor } from './components/editor';
-import { Console } from './components/console';
+import { message } from '@/examples/message';
+import { interpret } from '@engine/interpreter';
+import { transliterate } from '@engine/transliterator';
+import { getAlphanumericChars } from '@/engine/utils';
+import { Editor } from '@components/editor';
+import { Console } from '@components/console';
 import { BrushCleaningIcon, ListRestartIcon, PlayIcon } from 'lucide-react';
 
 function App() {
