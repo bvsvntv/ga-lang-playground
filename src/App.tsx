@@ -5,7 +5,13 @@ import { transliterate } from '@engine/transliterator';
 import { getAlphanumericChars } from '@/engine/utils';
 import { Editor } from '@components/editor';
 import { Console } from '@components/console';
-import { BrushCleaningIcon, ListRestartIcon, PlayIcon } from 'lucide-react';
+import {
+  BrushCleaningIcon,
+  ListRestartIcon,
+  PlayIcon,
+  TerminalIcon,
+  WorkflowIcon,
+} from 'lucide-react';
 
 function App() {
   const [input, setInput] = useState<string>(message);
@@ -68,24 +74,50 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
-      <main className="min-h-screen w-full max-w-7xl px-4 py-16">
-        <section className="flex gap-6">
-          <PlayIcon
-            onClick={handleRun}
-            className="cursor-pointer text-green-400"
-          />
-          <BrushCleaningIcon
-            onClick={handleClear}
-            className="cursor-pointer text-yellow-400"
-          />
-          <ListRestartIcon
-            onClick={handleReset}
-            className="cursor-pointer text-blue-400"
-          />
+    <div className="bg-zinc-50 font-sans">
+      <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16">
+        <section className="flex justify-between gap-0.5">
+          <div className="flex flex-1 items-center justify-between border border-zinc-400">
+            <p className="border-r border-dashed border-zinc-400 px-2">
+              init.ga
+            </p>
+
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleRun}
+                className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
+              >
+                <PlayIcon size={16} />
+              </button>
+
+              <button
+                onClick={handleClear}
+                className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
+              >
+                <BrushCleaningIcon size={16} />
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
+              >
+                <ListRestartIcon size={16} />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-1 items-center border border-zinc-400">
+            <button className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700">
+              <TerminalIcon size={16} />
+            </button>
+
+            <button className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700">
+              <WorkflowIcon size={16} />
+            </button>
+          </div>
         </section>
 
-        <section className="mt-4 flex justify-between gap-4">
+        <section className="flex justify-between gap-0.5">
           <Editor content={input} onChange={handleChange} />
           <Console output={output} />
         </section>
