@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { message } from '@/examples/message';
+import { initFileName, message } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
 import { transliterate } from '@engine/transliterator';
 import { getAlphanumericChars } from '@/engine/utils';
@@ -79,7 +79,7 @@ function App() {
         <section className="flex justify-between gap-0.5">
           <div className="flex flex-1 items-center justify-between border border-zinc-400">
             <p className="border-r border-dashed border-zinc-400 px-2">
-              init.ga
+              {initFileName}
             </p>
 
             <div className="flex items-center gap-1">

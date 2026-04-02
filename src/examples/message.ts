@@ -1,3 +1,5 @@
+export const initFileName = `प्रारम्भ.ग `;
+
 export const message = `मानौ सुचना = "देवनागरी लिपिमा प्रोग्रामहरू लेखौं।"
 छाप(सुचना)
 `;
