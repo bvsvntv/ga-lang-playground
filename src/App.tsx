@@ -71,9 +71,18 @@ function App() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
       <main className="min-h-screen w-full max-w-7xl px-4 py-16">
         <section className="flex gap-6">
-          <PlayIcon onClick={handleRun} className="cursor-pointer" />
-          <ListRestartIcon onClick={handleReset} className="cursor-pointer" />
-          <BrushCleaningIcon onClick={handleClear} className="cursor-pointer" />
+          <PlayIcon
+            onClick={handleRun}
+            className="cursor-pointer text-green-400"
+          />
+          <BrushCleaningIcon
+            onClick={handleClear}
+            className="cursor-pointer text-yellow-400"
+          />
+          <ListRestartIcon
+            onClick={handleReset}
+            className="cursor-pointer text-blue-400"
+          />
         </section>
 
         <section className="mt-4 flex justify-between gap-4">
