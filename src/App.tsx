@@ -78,7 +78,7 @@ function App() {
       <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16">
         <section className="flex justify-between gap-0.5">
           <div className="flex flex-1 items-center justify-between border border-zinc-400">
-            <p className="border-r border-dashed border-zinc-400 px-2">
+            <p className="border-r border-dashed border-zinc-400 px-2 text-base font-bold text-zinc-800">
               {initFileName}
             </p>
 

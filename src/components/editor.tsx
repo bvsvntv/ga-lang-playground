@@ -14,7 +14,7 @@ export function Editor({ content, onChange }: EditorProps) {
       value={content}
       defaultValue={content}
       onChange={handleInput}
-      className="text-zinc mt-0.5 w-full rounded-b border border-zinc-400 p-2 focus:outline-none"
+      className="mt-0.5 w-full rounded-b border border-zinc-400 p-2 text-zinc-900 focus:outline-none"
     />
   );
 }
