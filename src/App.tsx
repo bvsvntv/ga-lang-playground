@@ -13,6 +13,7 @@ import {
   TerminalIcon,
   WorkflowIcon,
 } from 'lucide-react';
+import { Button } from '@ui/button';
 
 function App() {
   const [input, setInput] = useState<string>(message);
@@ -90,44 +91,32 @@ function App() {
             </p>
 
             <div className="flex items-center gap-1">
-              <button
-                onClick={handleRun}
-                className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
-              >
+              <Button onClick={handleRun}>
                 <PlayIcon size={16} />
-              </button>
+              </Button>
 
-              <button
-                onClick={handleClear}
-                className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
-              >
+              <Button onClick={handleClear}>
                 <BrushCleaningIcon size={16} />
-              </button>
+              </Button>
 
-              <button
-                onClick={handleReset}
-                className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
-              >
+              <Button onClick={handleReset}>
                 <ListRestartIcon size={16} />
-              </button>
+              </Button>
             </div>
           </div>
 
           <div className="flex flex-1 items-center border border-zinc-400">
-            <button className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700">
+            <Button>
               <TerminalIcon size={16} />
-            </button>
+            </Button>
 
-            <button className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700">
+            <Button>
               <WorkflowIcon size={16} />
-            </button>
+            </Button>
 
-            <button
-              onClick={showHelpMenu}
-              className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
-            >
+            <Button onClick={showHelpMenu}>
               <CircleQuestionMarkIcon size={16} />
-            </button>
+            </Button>
           </div>
         </section>
 
