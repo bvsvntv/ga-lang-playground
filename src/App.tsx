@@ -7,6 +7,7 @@ import { Editor } from '@components/editor';
 import { Console } from '@components/console';
 import {
   BrushCleaningIcon,
+  CircleQuestionMarkIcon,
   ListRestartIcon,
   PlayIcon,
   TerminalIcon,
@@ -73,6 +74,12 @@ function App() {
     setOutput('');
   }
 
+  function showHelpMenu(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ): void {
+    alert(event.type);
+  }
+
   return (
     <div className="bg-zinc-50 font-sans">
       <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16">
@@ -113,6 +120,13 @@ function App() {
 
             <button className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700">
               <WorkflowIcon size={16} />
+            </button>
+
+            <button
+              onClick={showHelpMenu}
+              className="cursor-pointer rounded p-2 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
+            >
+              <CircleQuestionMarkIcon size={16} />
             </button>
           </div>
         </section>
