@@ -14,6 +14,7 @@ import {
   WorkflowIcon,
 } from 'lucide-react';
 import { Button } from '@ui/button';
+import { CommandPalette } from './components/command-palette';
 
 function App() {
   const [input, setInput] = useState<string>(message);
@@ -124,6 +125,8 @@ function App() {
           <Editor content={input} onChange={handleChange} />
           <Console output={output} />
         </section>
+
+        <CommandPalette />
       </main>
     </div>
   );
