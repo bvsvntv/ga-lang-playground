@@ -39,7 +39,12 @@ export function CommandPalette() {
   return (
     <>
       {isOpen && (
-        <ReactMarkdown remarkPlugins={[reactGfm]}>{markdown}</ReactMarkdown>
+        <div className="fixed inset-0 overflow-y-auto p-4 pt-[25vh]">
+          <div className="fixed inset-0 bg-transparent backdrop-blur"></div>
+          <div className="relative mx-auto max-w-xl rounded bg-zinc-50 p-2 shadow">
+            <ReactMarkdown remarkPlugins={[reactGfm]}>{markdown}</ReactMarkdown>
+          </div>
+        </div>
       )}
     </>
   );
