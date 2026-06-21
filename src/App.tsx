@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { initFileName, message } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
 import { transliterate } from '@engine/transliterator';
@@ -20,6 +20,25 @@ function App() {
   const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
   const [showPalette, setShowPalette] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setShowPalette(true);
+      }
+
+      if (e.key.toLowerCase() === 'escape') {
+        setShowPalette(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKey);
+
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, []);
 
   function getOutput(): string {
     return interpret(input);
@@ -77,10 +96,6 @@ function App() {
     setOutput('');
   }
 
-  function showHelpMenu(): void {
-    setShowPalette(true);
-  }
-
   return (
     <div className="bg-zinc-50 font-sans">
       <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16">
@@ -114,7 +129,7 @@ function App() {
               <WorkflowIcon size={16} />
             </Button>
 
-            <Button onClick={showHelpMenu}>
+            <Button onClick={() => setShowPalette(true)}>
               <CircleQuestionMarkIcon size={16} />
             </Button>
           </div>
