@@ -36,13 +36,34 @@ export function CommandPalette() {
     fetchMarkdown();
   }, []);
 
+  const customComponents = {
+    h2: (props: any) => (
+      <h2 className="text-xl font-bold text-zinc-800" {...props} />
+    ),
+    table: (props: any) => (
+      <div>
+        <table
+          className="mt-2 w-full border-collapse overflow-x-auto border"
+          {...props}
+        />
+      </div>
+    ),
+    th: (props: any) => <th className="border bg-zinc-100 p-2" {...props} />,
+    td: (props: any) => <td className="border p-2" {...props} />,
+  };
+
   return (
     <>
       {isOpen && (
         <div className="fixed inset-0 overflow-y-auto p-4 pt-[25vh]">
           <div className="fixed inset-0 bg-transparent backdrop-blur"></div>
           <div className="relative mx-auto max-w-xl rounded bg-zinc-50 p-2 shadow">
-            <ReactMarkdown remarkPlugins={[reactGfm]}>{markdown}</ReactMarkdown>
+            <ReactMarkdown
+              remarkPlugins={[reactGfm]}
+              components={customComponents}
+            >
+              {markdown}
+            </ReactMarkdown>
           </div>
         </div>
       )}
