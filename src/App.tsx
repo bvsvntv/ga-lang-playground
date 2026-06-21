@@ -19,6 +19,7 @@ import { CommandPalette } from './components/command-palette';
 function App() {
   const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
+  const [showPalette, setShowPalette] = useState<boolean>(false);
 
   function getOutput(): string {
     return interpret(input);
@@ -76,10 +77,8 @@ function App() {
     setOutput('');
   }
 
-  function showHelpMenu(
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ): void {
-    alert(event.type);
+  function showHelpMenu(): void {
+    setShowPalette(true);
   }
 
   return (
@@ -126,7 +125,10 @@ function App() {
           <Console output={output} />
         </section>
 
-        <CommandPalette />
+        <CommandPalette
+          show={showPalette}
+          onClose={() => setShowPalette(false)}
+        />
       </main>
     </div>
   );

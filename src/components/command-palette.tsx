@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
 import reactGfm from 'remark-gfm';
 
-export function CommandPalette() {
+type CommandPaletteProps = {
+  show: boolean;
+  onClose: () => void;
+};
+
+export function CommandPalette({ show = false, onClose }: CommandPaletteProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [markdown, setMarkdown] = useState<string>('');
+
+  useEffect(() => {
+    setIsOpen(show);
+  }, [show]);
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -14,6 +24,7 @@ export function CommandPalette() {
 
       if (e.key === 'Escape') {
         setIsOpen(false);
+        onClose();
       }
     };
 
@@ -36,11 +47,11 @@ export function CommandPalette() {
     fetchMarkdown();
   }, []);
 
-  const customComponents = {
-    h2: (props: any) => (
+  const customComponents: Components = {
+    h2: (props) => (
       <h2 className="text-xl font-bold text-zinc-800" {...props} />
     ),
-    table: (props: any) => (
+    table: (props) => (
       <div>
         <table
           className="mt-2 w-full border-collapse overflow-x-auto border"
@@ -48,8 +59,8 @@ export function CommandPalette() {
         />
       </div>
     ),
-    th: (props: any) => <th className="border bg-zinc-100 p-2" {...props} />,
-    td: (props: any) => <td className="border p-2" {...props} />,
+    th: (props) => <th className="border bg-zinc-100 p-2" {...props} />,
+    td: (props) => <td className="border p-2" {...props} />,
   };
 
   return (
