@@ -9,22 +9,31 @@ type CommandPaletteProps = {
 
 export function CommandPalette({ show = false, onClose }: CommandPaletteProps) {
   const [markdown, setMarkdown] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!show || markdown) return;
+
     async function fetchMarkdown() {
       try {
+        setLoading(true);
+        setError(null);
+
         const response = await fetch(
           'https://raw.githubusercontent.com/bvsvntv/ga-lang/refs/heads/main/docs/language-specification.md',
         );
         const text = await response.text();
         setMarkdown(text);
       } catch (err) {
-        console.log(err);
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchMarkdown();
-  }, []);
+  }, [show, markdown]);
 
   const customComponents: Components = {
     h2: (props) => (
@@ -51,12 +60,20 @@ export function CommandPalette({ show = false, onClose }: CommandPaletteProps) {
             onClick={() => onClose()}
           ></div>
           <div className="relative mx-auto max-w-xl rounded bg-zinc-50 p-2 shadow">
-            <ReactMarkdown
-              remarkPlugins={[reactGfm]}
-              components={customComponents}
-            >
-              {markdown}
-            </ReactMarkdown>
+            {loading ? (
+              <div className="text-center text-zinc-500">
+                Loading documentation...
+              </div>
+            ) : error ? (
+              <div className="text-center text-red-500">{error}</div>
+            ) : (
+              <ReactMarkdown
+                remarkPlugins={[reactGfm]}
+                components={customComponents}
+              >
+                {markdown}
+              </ReactMarkdown>
+            )}
           </div>
         </div>
       )}
