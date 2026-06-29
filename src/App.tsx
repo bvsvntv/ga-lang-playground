@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { initFileName, message } from '@/examples/message';
+import { initFileName, message, noCodeToRun } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
 import { transliterate } from '@engine/transliterator';
 import { getAlphanumericChars } from '@/engine/utils';
@@ -74,7 +74,7 @@ function App() {
 
   function handleRun() {
     if (!input.trim()) {
-      setOutput('No code to run.');
+      setOutput(noCodeToRun);
       return;
     }
 

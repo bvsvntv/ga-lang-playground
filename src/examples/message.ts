@@ -1,5 +1,6 @@
-export const initFileName = `प्रारम्भ.ग `;
-
+export const initFileName = `प्रारम्भ.ग`;
 export const message = `मानौ सुचना = "देवनागरी लिपिमा प्रोग्रामहरू लेखौं।"
 छाप(सुचना)
 `;
+export const noCodeToRun = `चलाउनका लागि कोड छैन।`;
+export const unknownError = `अज्ञात त्रुटि देखा पर्यो।`;

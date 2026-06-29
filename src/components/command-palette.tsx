@@ -1,3 +1,4 @@
+import { unknownError } from '@/examples/message';
 import { useEffect, useState } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import reactGfm from 'remark-gfm';
@@ -26,7 +27,7 @@ export function CommandPalette({ show = false, onClose }: CommandPaletteProps) {
         const text = await response.text();
         setMarkdown(text);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+        setError(err instanceof Error ? err.message : unknownError);
       } finally {
         setLoading(false);
       }
