@@ -5,7 +5,6 @@ type AlphaNumCharsReturnType = {
 };
 
 export function getAlphanumericChars(text: string): AlphaNumCharsReturnType {
-  // Match basic alphanumeric characters
   const match = text.match(/[A-Za-z0-9]+(?=\s*$)/);
 
   if (!match)
@@ -23,4 +22,14 @@ export function getAlphanumericChars(text: string): AlphaNumCharsReturnType {
     word,
     suffix,
   };
+}
+
+export function getLastWord(text: string): { prefix: string; word: string } | null {
+  const match = text.match(/[A-Za-z0-9]+$/);
+  if (!match) return null;
+
+  const word = match[0];
+  const prefix = text.slice(0, text.length - word.length);
+
+  return { prefix, word };
 }

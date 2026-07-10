@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { initFileName, message, noCodeToRun } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
 import { transliterate } from '@engine/transliterator';
-import { getAlphanumericChars } from '@/engine/utils';
+import { getAlphanumericChars, getLastWord } from '@/engine/utils';
 import { Editor } from '@components/editor';
 import { Console } from '@components/console';
 import {
@@ -20,6 +20,9 @@ function App() {
   const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
   const [showPalette, setShowPalette] = useState<boolean>(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [activeWord, setActiveWord] = useState<string | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -40,12 +43,18 @@ function App() {
     };
   }, []);
 
+  function clearSuggestions() {
+    setSuggestions([]);
+    setActiveWord(null);
+  }
+
   function getOutput(): string {
     return interpret(input);
   }
 
   async function handleChange(value: string) {
     if (value.endsWith(' ')) {
+      clearSuggestions();
       const parsed = getAlphanumericChars(value);
       if (!parsed.word) {
         setInput(value);
@@ -58,8 +67,6 @@ function App() {
         if (results.length > 0) {
           const rebuilt = prefix + results[0] + suffix;
           setInput(rebuilt);
-        } else {
-          setInput(results[0]);
         }
       } catch (err) {
         console.error('ERROR: ', err);
@@ -70,6 +77,34 @@ function App() {
     }
 
     setInput(value);
+
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    const lastWord = getLastWord(value);
+    if (lastWord && lastWord.word.length >= 1) {
+      setActiveWord(lastWord.word);
+      const word = lastWord.word;
+      debounceTimer.current = setTimeout(async () => {
+        try {
+          const results = await transliterate(word);
+          setSuggestions(results);
+        } catch {
+          setSuggestions([]);
+        }
+      }, 300);
+    } else {
+      clearSuggestions();
+    }
+  }
+
+  function handleSelectSuggestion(suggestion: string) {
+    const lastWord = getLastWord(input);
+    if (lastWord) {
+      setInput(lastWord.prefix + suggestion);
+      clearSuggestions();
+    }
   }
 
   function handleRun() {
@@ -136,7 +171,13 @@ function App() {
         </section>
 
         <section className="flex justify-between gap-0.5">
-          <Editor content={input} onChange={handleChange} />
+          <Editor
+            content={input}
+            suggestions={suggestions}
+            activeWord={activeWord}
+            onChange={handleChange}
+            onSelectSuggestion={handleSelectSuggestion}
+          />
           <Console output={output} />
         </section>
 
