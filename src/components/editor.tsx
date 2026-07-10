@@ -5,7 +5,7 @@ type EditorProps = {
   content: string;
   suggestions: string[];
   activeWord: string | null;
-  onChange: (content: string) => void;
+  onChange: (content: string, cursorPos: number) => void;
   onSelectSuggestion: (suggestion: string) => void;
 };
 
@@ -66,7 +66,11 @@ export function Editor({
   }, [suggestions, activeWord, content]);
 
   function handleInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    onChange(e.target.value);
+    onChange(e.target.value, e.target.selectionStart);
+  }
+
+  function handleSelect(e: React.SyntheticEvent<HTMLTextAreaElement>) {
+    onChange(e.currentTarget.value, e.currentTarget.selectionStart);
   }
 
   return (
@@ -76,6 +80,7 @@ export function Editor({
         rows={28}
         value={content}
         onChange={handleInput}
+        onSelect={handleSelect}
         className="mt-0.5 w-full rounded-b border border-zinc-400 p-2 text-zinc-900 focus:outline-none"
       />
       {suggestions.length > 0 &&

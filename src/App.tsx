@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { initFileName, message, noCodeToRun } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
 import { transliterate } from '@engine/transliterator';
-import { getAlphanumericChars, getLastWord } from '@/engine/utils';
+import { getWordAtCursor } from '@/engine/utils';
 import { Editor } from '@components/editor';
 import { Console } from '@components/console';
 import {
@@ -22,6 +22,10 @@ function App() {
   const [showPalette, setShowPalette] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeWord, setActiveWord] = useState<string | null>(null);
+  const [wordRange, setWordRange] = useState<{
+    start: number;
+    end: number;
+  } | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -46,46 +50,45 @@ function App() {
   function clearSuggestions() {
     setSuggestions([]);
     setActiveWord(null);
+    setWordRange(null);
   }
 
   function getOutput(): string {
     return interpret(input);
   }
 
-  async function handleChange(value: string) {
-    if (value.endsWith(' ')) {
-      clearSuggestions();
-      const parsed = getAlphanumericChars(value);
-      if (!parsed.word) {
-        setInput(value);
-        return;
-      }
-
-      const { prefix, word, suffix } = parsed;
-      try {
-        const results = await transliterate(word as string);
-        if (results.length > 0) {
-          const rebuilt = prefix + results[0] + suffix;
-          setInput(rebuilt);
-        }
-      } catch (err) {
-        console.error('ERROR: ', err);
-        setInput(value);
-      }
-
-      return;
-    }
-
+  async function handleChange(value: string, cursorPos: number) {
     setInput(value);
 
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
 
-    const lastWord = getLastWord(value);
-    if (lastWord && lastWord.word.length >= 1) {
-      setActiveWord(lastWord.word);
-      const word = lastWord.word;
+    const justTypedSpace = value[cursorPos - 1] === ' ';
+    const probePos = justTypedSpace ? cursorPos - 1 : cursorPos;
+    const atCursor = getWordAtCursor(value, probePos);
+
+    if (justTypedSpace && atCursor) {
+      try {
+        const results = await transliterate(atCursor.word);
+        if (results.length > 0) {
+          const rebuilt =
+            value.slice(0, atCursor.start) +
+            results[0] +
+            value.slice(atCursor.end);
+          setInput(rebuilt);
+        }
+      } catch (err) {
+        console.error('ERROR: ', err);
+      }
+      clearSuggestions();
+      return;
+    }
+
+    if (atCursor && atCursor.word.length >= 1) {
+      setActiveWord(atCursor.word);
+      setWordRange({ start: atCursor.start, end: atCursor.end });
+      const word = atCursor.word;
       debounceTimer.current = setTimeout(async () => {
         try {
           const results = await transliterate(word);
@@ -100,11 +103,11 @@ function App() {
   }
 
   function handleSelectSuggestion(suggestion: string) {
-    const lastWord = getLastWord(input);
-    if (lastWord) {
-      setInput(lastWord.prefix + suggestion);
-      clearSuggestions();
-    }
+    if (!wordRange) return;
+    const { start, end } = wordRange;
+    const rebuilt = input.slice(0, start) + suggestion + input.slice(end);
+    setInput(rebuilt);
+    clearSuggestions();
   }
 
   function handleRun() {
