@@ -7,6 +7,8 @@ type EditorProps = {
   activeWord: string | null;
   onChange: (content: string, cursorPos: number) => void;
   onSelectSuggestion: (suggestion: string) => void;
+  cursorRestorePosition: number | null;
+  onCursorRestored: () => void;
 };
 
 type CursorCoords = {
@@ -54,6 +56,8 @@ export function Editor({
   activeWord,
   onChange,
   onSelectSuggestion,
+  cursorRestorePosition,
+  onCursorRestored,
 }: EditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [coords, setCoords] = useState<CursorCoords>({ top: 0, left: 0 });
@@ -64,6 +68,17 @@ export function Editor({
       setCoords(c);
     }
   }, [suggestions, activeWord, content]);
+
+  useEffect(() => {
+    if (cursorRestorePosition !== null && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(
+        cursorRestorePosition,
+        cursorRestorePosition,
+      );
+      onCursorRestored();
+    }
+  }, [content, cursorRestorePosition, onCursorRestored]);
 
   function handleInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
     onChange(e.target.value, e.target.selectionStart);

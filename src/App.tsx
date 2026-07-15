@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { initFileName, message, noCodeToRun } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
 import { transliterate } from '@engine/transliterator';
@@ -26,7 +26,13 @@ function App() {
     start: number;
     end: number;
   } | null>(null);
+  const [cursorRestorePosition, setCursorRestorePosition] = useState<
+    number | null
+  >(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleCursorRestored = useCallback(() => {
+    setCursorRestorePosition(null);
+  }, []);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -77,6 +83,7 @@ function App() {
             results[0] +
             value.slice(atCursor.end);
           setInput(rebuilt);
+          setCursorRestorePosition(atCursor.start + results[0].length + 1);
         }
       } catch (err) {
         console.error('ERROR: ', err);
@@ -107,6 +114,7 @@ function App() {
     const { start, end } = wordRange;
     const rebuilt = input.slice(0, start) + suggestion + input.slice(end);
     setInput(rebuilt);
+    setCursorRestorePosition(start + suggestion.length + 1);
     clearSuggestions();
   }
 
@@ -180,6 +188,8 @@ function App() {
             activeWord={activeWord}
             onChange={handleChange}
             onSelectSuggestion={handleSelectSuggestion}
+            cursorRestorePosition={cursorRestorePosition}
+            onCursorRestored={handleCursorRestored}
           />
           <Console output={output} />
         </section>
