@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { initFileName, message, noCodeToRun } from '@/examples/message';
 import { interpret } from '@engine/interpreter';
-import { transliterate } from '@engine/transliterator';
-import { getWordAtCursor } from '@/engine/utils';
 import { Editor } from '@components/editor';
 import { Console } from '@components/console';
 import {
@@ -15,24 +13,20 @@ import {
 } from 'lucide-react';
 import { Button } from '@ui/button';
 import { CommandPalette } from './components/command-palette';
+import { useTransliteration } from './hooks/use-transliteration';
 
 function App() {
   const [input, setInput] = useState<string>(message);
   const [output, setOutput] = useState<string>('');
   const [showPalette, setShowPalette] = useState<boolean>(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [activeWord, setActiveWord] = useState<string | null>(null);
-  const [wordRange, setWordRange] = useState<{
-    start: number;
-    end: number;
-  } | null>(null);
-  const [cursorRestorePosition, setCursorRestorePosition] = useState<
-    number | null
-  >(null);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handleCursorRestored = useCallback(() => {
-    setCursorRestorePosition(null);
-  }, []);
+  const {
+    suggestions,
+    activeWord,
+    cursorRestorePosition,
+    handleCursorRestored,
+    handleChange,
+    handleSelectSuggestion,
+  } = useTransliteration(setInput);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -53,69 +47,8 @@ function App() {
     };
   }, []);
 
-  function clearSuggestions() {
-    setSuggestions([]);
-    setActiveWord(null);
-    setWordRange(null);
-  }
-
   function getOutput(): string {
     return interpret(input);
-  }
-
-  async function handleChange(value: string, cursorPos: number) {
-    setInput(value);
-
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-
-    const justTypedSpace = value[cursorPos - 1] === ' ';
-    const probePos = justTypedSpace ? cursorPos - 1 : cursorPos;
-    const atCursor = getWordAtCursor(value, probePos);
-
-    if (justTypedSpace && atCursor) {
-      try {
-        const results = await transliterate(atCursor.word);
-        if (results.length > 0) {
-          const rebuilt =
-            value.slice(0, atCursor.start) +
-            results[0] +
-            value.slice(atCursor.end);
-          setInput(rebuilt);
-          setCursorRestorePosition(atCursor.start + results[0].length + 1);
-        }
-      } catch (err) {
-        console.error('ERROR: ', err);
-      }
-      clearSuggestions();
-      return;
-    }
-
-    if (atCursor && atCursor.word.length >= 1) {
-      setActiveWord(atCursor.word);
-      setWordRange({ start: atCursor.start, end: atCursor.end });
-      const word = atCursor.word;
-      debounceTimer.current = setTimeout(async () => {
-        try {
-          const results = await transliterate(word);
-          setSuggestions(results);
-        } catch {
-          setSuggestions([]);
-        }
-      }, 300);
-    } else {
-      clearSuggestions();
-    }
-  }
-
-  function handleSelectSuggestion(suggestion: string) {
-    if (!wordRange) return;
-    const { start, end } = wordRange;
-    const rebuilt = input.slice(0, start) + suggestion + input.slice(end);
-    setInput(rebuilt);
-    setCursorRestorePosition(start + suggestion.length + 1);
-    clearSuggestions();
   }
 
   function handleRun() {
@@ -127,8 +60,10 @@ function App() {
     try {
       const results = getOutput();
       setOutput(results);
-    } catch (error: any) {
-      setOutput(error.message);
+    } catch (error: unknown) {
+      setOutput(
+        error instanceof Error ? error.message : 'An unknown error occurred',
+      );
     }
   }
 
@@ -187,7 +122,9 @@ function App() {
             suggestions={suggestions}
             activeWord={activeWord}
             onChange={handleChange}
-            onSelectSuggestion={handleSelectSuggestion}
+            onSelectSuggestion={(suggestion) =>
+              handleSelectSuggestion(suggestion, input)
+            }
             cursorRestorePosition={cursorRestorePosition}
             onCursorRestored={handleCursorRestored}
           />
